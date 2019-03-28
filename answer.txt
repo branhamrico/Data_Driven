@@ -1,0 +1,62 @@
+1. Database Schema:
+    CREATE TABLE `plans_plan` (
+        `id` int(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `name` VARCHAR(200) NOT NULL,
+        `description` LONGTEXT NOT NULL,
+        `cost` NUMERIC(10 , 2 ) NOT NULL
+    );
+
+    CREATE TABLE `plans_provider` (
+        `id` int(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `name` VARCHAR(200) NOT NULL
+    );
+
+    CREATE TABLE `cart` (
+        `id` INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `paid` TINYINT NOT NULL,
+        `client_id` INT(11) NOT NULL
+    );
+
+    CREATE TABLE `cartitem` (
+        `id` INT(11) AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `COUNT` INT(11) NOT NULL,
+        `cart_id` INT(11) NOT NULL,
+        `term_id` INT(11) NOT NULL,
+        `plan_id` INT(11) NOT NULL
+    );
+
+    ALTER TABLE `plans_plan`
+        ADD COLUMN `provider_id` integer NOT NULL;
+    ALTER TABLE `plans_plan`
+        ADD CONSTRAINT `plans_plan_provider_id_28d19653_fk_plans_provider_id` FOREIGN KEY (`provider_id`) REFERENCES `plans_provider` (`id`);
+    ALTER TABLE `plans_cart`
+        ADD CONSTRAINT `plans_cart_client_id_aa84c364_fk_auth_user_id` FOREIGN KEY (`client_id`) REFERENCES `auth_user` (`id`);
+    ALTER TABLE `plans_cartitem`
+        ADD CONSTRAINT `plans_cartitem_plan_id_13e45dd5_fk_plans_plan_id` FOREIGN KEY (`plan_id`) REFERENCES `plans_plan` (`id`);
+    ALTER TABLE `plans_cartitem`
+        ADD CONSTRAINT `plans_cartitem_term_id_491b5a8c_fk_plans_term_id` FOREIGN KEY (`term_id`) REFERENCES `plans_term` (`id`);
+
+2. n/a
+
+3. Please look at the functionality
+    a. n/a
+    b. -
+        i.  Together with the default django framework I also used the django-rest-framework to develop the entire API.
+            There are API endpoint however that needs modification due to its use case. All the functionalities used in
+            this app is available in django ang django-rest-framework.
+
+            I created 4 tables:
+                - provider Acts as the HMO
+                - plan Available Plans
+                - term Different payment terms for each plan
+                - cart Virtual basket own by the user(client)
+                - cartitem Items in the virtual basket
+
+            Following are the relationship of each tables
+                - provider has many plan
+                - plan belongs to a provider
+                - cart belongs to a user(client) and has many cartitem
+                - cartitem belongs to a cart and has one term
+                - term has many cartitem
+
+            To check the API I used POSTMAN. To browse the online API go to https://www.getpostman.com/collections/e61be3b29886670b0a29
